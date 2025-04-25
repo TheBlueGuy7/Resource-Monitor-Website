@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Server Monitor</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <div class="container mx-auto px-4 py-8">
+      <h1 class="text-3xl font-bold mb-8 text-center">
+        Server Monitoring Dashboard
+      </h1>
+
+      <!-- System Stats Section -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- CPU Card -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold mb-4">CPU Usage</h2>
+          <div class="flex items-center justify-between">
+            <div class="w-32 h-32 relative">
+              <svg class="w-full h-full" viewBox="0 0 36 36">
+                <path
+                  d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#eee"
+                  stroke-width="3"
+                />
+                <path
+                  d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#4CAF50"
+                  stroke-width="3"
+                  stroke-dasharray="0, 100"
+                />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-2xl font-bold" id="cpu-percent">0%</span>
+              </div>
+            </div>
+            <div>
+              <p class="text-gray-600">Cores: <span id="cpu-cores">0</span></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Memory Card -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold mb-4">Memory Usage</h2>
+          <div class="flex items-center justify-between">
+            <div class="w-32 h-32 relative">
+              <svg class="w-full h-full" viewBox="0 0 36 36">
+                <path
+                  d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#eee"
+                  stroke-width="3"
+                />
+                <path
+                  d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#2196F3"
+                  stroke-width="3"
+                  stroke-dasharray="0, 100"
+                />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-2xl font-bold" id="memory-percent">0%</span>
+              </div>
+            </div>
+            <div>
+              <p class="text-gray-600">
+                Used: <span id="memory-used">0 GB</span>
+              </p>
+              <p class="text-gray-600">
+                Total: <span id="memory-total">0 GB</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Disk Card -->
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-xl font-semibold mb-4">Disk Usage</h2>
+          <div class="flex items-center justify-between">
+            <div class="w-32 h-32 relative">
+              <svg class="w-full h-full" viewBox="0 0 36 36">
+                <path
+                  d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#eee"
+                  stroke-width="3"
+                />
+                <path
+                  d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#FF9800"
+                  stroke-width="3"
+                  stroke-dasharray="0, 100"
+                />
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span class="text-2xl font-bold" id="disk-percent">0%</span>
+              </div>
+            </div>
+            <div>
+              <p class="text-gray-600">
+                Used: <span id="disk-used">0 GB</span>
+              </p>
+              <p class="text-gray-600">
+                Total: <span id="disk-total">0 GB</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pterodactyl Servers Section -->
+      <div class="bg-white rounded-lg shadow-lg p-6">
+        <h2 class="text-xl font-semibold mb-4">Pterodactyl Servers</h2>
+        <div
+          id="pterodactyl-servers"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+          <!-- Server cards will be dynamically added here -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function formatBytes(bytes) {
+        const gb = bytes / (1024 * 1024 * 1024);
+        return gb.toFixed(2) + " GB";
+      }
+
+      function updateSystemStats() {
+        fetch("/api/system-stats")
+          .then((response) => response.json())
+          .then((data) => {
+            // Update CPU
+            document.getElementById("cpu-percent").textContent =
+              data.cpu.percent + "%";
+            document.getElementById("cpu-cores").textContent = data.cpu.cores;
+
+            // Update Memory
+            document.getElementById("memory-percent").textContent =
+              data.memory.percent + "%";
+            document.getElementById("memory-used").textContent = formatBytes(
+              data.memory.used
+            );
+            document.getElementById("memory-total").textContent = formatBytes(
+              data.memory.total
+            );
+
+            // Update Disk
+            document.getElementById("disk-percent").textContent =
+              data.disk.percent + "%";
+            document.getElementById("disk-used").textContent = formatBytes(
+              data.disk.used
+            );
+            document.getElementById("disk-total").textContent = formatBytes(
+              data.disk.total
+            );
+          });
+      }
+
+      function updatePterodactylServers() {
+        fetch("/api/pterodactyl-servers")
+          .then((response) => response.json())
+          .then((servers) => {
+            const container = document.getElementById("pterodactyl-servers");
+            container.innerHTML = servers
+              .map(
+                (server) => `
+                        <div class="bg-gray-50 rounded-lg p-4">
+                            <h3 class="font-semibold">${server.attributes.name}</h3>
+                            <p class="text-gray-600">Status: ${server.attributes.status}</p>
+                            <p class="text-gray-600">Memory: ${server.attributes.limits.memory} MB</p>
+                            <p class="text-gray-600">CPU: ${server.attributes.limits.cpu}%</p>
+                        </div>
+                    `
+              )
+              .join("");
+          });
+      }
+
+      // Update stats every 5 seconds
+      setInterval(updateSystemStats, 5000);
+      setInterval(updatePterodactylServers, 5000);
+
+      // Initial update
+      updateSystemStats();
+      updatePterodactylServers();
+    </script>
+  </body>
+</html>

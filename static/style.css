@@ -1,0 +1,27 @@
+/* Circular progress animation */
+@keyframes circular-progress {
+  from {
+    stroke-dasharray: 0, 100;
+  }
+}
+
+svg path:last-child {
+  animation: circular-progress 1s ease-out forwards;
+}
+
+/* Card hover effects */
+.bg-white:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+
+  .grid {
+    gap: 1rem;
+  }
+}
