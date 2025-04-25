@@ -39,6 +39,7 @@ def get_system_stats():
 def get_pterodactyl_servers():
     """Get list of Pterodactyl servers."""
     if not PTERODACTYL_URL or not PTERODACTYL_API_KEY:
+        print("Pterodactyl configuration missing")
         return []
     
     headers = {
@@ -47,9 +48,14 @@ def get_pterodactyl_servers():
     }
     
     try:
-        response = requests.get(f'{PTERODACTYL_URL}/api/client/servers', headers=headers)
+        print(f"Fetching servers from: {PTERODACTYL_URL}/api/client")
+        response = requests.get(f'{PTERODACTYL_URL}/api/client', headers=headers)
+        print(f"Response status code: {response.status_code}")
         if response.status_code == 200:
-            return response.json()['data']
+            data = response.json()
+            print(f"Received {len(data.get('data', []))} servers")
+            return data.get('data', [])
+        print(f"Error response: {response.text}")
         return []
     except Exception as e:
         print(f"Error fetching Pterodactyl servers: {e}")

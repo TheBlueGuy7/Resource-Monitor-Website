@@ -221,9 +221,18 @@
 
       function updatePterodactylServers() {
         fetch("/api/pterodactyl-servers")
-          .then((response) => response.json())
+          .then((response) => {
+            console.log("API Response Status:", response.status);
+            return response.json();
+          })
           .then((servers) => {
+            console.log("Received Servers Data:", servers);
             const container = document.getElementById("pterodactyl-servers");
+            if (!servers || servers.length === 0) {
+              container.innerHTML =
+                '<p class="text-gray-600">No servers found or API not configured</p>';
+              return;
+            }
             container.innerHTML = servers
               .map(
                 (server) => `
@@ -236,6 +245,12 @@
                     `
               )
               .join("");
+          })
+          .catch((error) => {
+            console.error("Error fetching Pterodactyl servers:", error);
+            const container = document.getElementById("pterodactyl-servers");
+            container.innerHTML =
+              '<p class="text-red-600">Error loading servers. Check console for details.</p>';
           });
       }
 
