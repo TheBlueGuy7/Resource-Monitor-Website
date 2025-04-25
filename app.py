@@ -19,17 +19,19 @@ def get_system_stats():
     
     return {
         'cpu': {
-            'percent': cpu_percent,a
+            'percent': cpu_percent,
             'cores': psutil.cpu_count()
         },
         'memory': {
             'total': memory.total,
             'used': memory.used,
+            'free': memory.available,
             'percent': memory.percent
         },
         'disk': {
             'total': disk.total,
             'used': disk.used,
+            'free': disk.free,
             'percent': disk.percent
         }
     }

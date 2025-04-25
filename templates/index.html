@@ -53,6 +53,16 @@
               <p class="text-gray-600">Cores: <span id="cpu-cores">0</span></p>
             </div>
           </div>
+          <!-- CPU Progress Bar -->
+          <div class="mt-4">
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+              <div
+                id="cpu-progress"
+                class="bg-green-500 h-2.5 rounded-full"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
         </div>
 
         <!-- Memory Card -->
@@ -90,6 +100,16 @@
               <p class="text-gray-600">
                 Total: <span id="memory-total">0 GB</span>
               </p>
+            </div>
+          </div>
+          <!-- Memory Progress Bar -->
+          <div class="mt-4">
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+              <div
+                id="memory-progress"
+                class="bg-blue-500 h-2.5 rounded-full"
+                style="width: 0%"
+              ></div>
             </div>
           </div>
         </div>
@@ -131,6 +151,16 @@
               </p>
             </div>
           </div>
+          <!-- Disk Progress Bar -->
+          <div class="mt-4">
+            <div class="w-full bg-gray-200 rounded-full h-2.5">
+              <div
+                id="disk-progress"
+                class="bg-orange-500 h-2.5 rounded-full"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -160,6 +190,8 @@
             document.getElementById("cpu-percent").textContent =
               data.cpu.percent + "%";
             document.getElementById("cpu-cores").textContent = data.cpu.cores;
+            document.getElementById("cpu-progress").style.width =
+              data.cpu.percent + "%";
 
             // Update Memory
             document.getElementById("memory-percent").textContent =
@@ -170,6 +202,8 @@
             document.getElementById("memory-total").textContent = formatBytes(
               data.memory.total
             );
+            document.getElementById("memory-progress").style.width =
+              data.memory.percent + "%";
 
             // Update Disk
             document.getElementById("disk-percent").textContent =
@@ -180,6 +214,8 @@
             document.getElementById("disk-total").textContent = formatBytes(
               data.disk.total
             );
+            document.getElementById("disk-progress").style.width =
+              data.disk.percent + "%";
           });
       }
 
